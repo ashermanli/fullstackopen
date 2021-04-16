@@ -14,7 +14,7 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('A new note')
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('some error happened...')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     noteService.getAll().then(initialNotes => {
@@ -42,7 +42,7 @@ const App = () => {
   }
 
   const toggleImportanceOf = (id) => {
-    const url = `http://localhost:3001/notes/${id}`
+    // const url = `http://localhost:3001/notes/${id}`
 
     const note = notes.find(n => n.id === id)
 
@@ -53,6 +53,8 @@ const App = () => {
     })
     .catch(error => {
       setErrorMessage(`The Note "${note.content}" was already deleted from the server`)
+
+      console.log(error)
 
       setTimeout(() =>{
         setErrorMessage(null)
