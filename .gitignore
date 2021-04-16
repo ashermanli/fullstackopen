@@ -12,9 +12,8 @@ node_modules/
 /build
 
 # misc
-db.json
-fullstackopen/**/.eslintcache
-fullstackopen/**/db.json
+
+**/.eslintcache/
 .DS_Store
 .env.local
 .env.development.local
