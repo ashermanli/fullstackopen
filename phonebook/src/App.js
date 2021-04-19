@@ -19,9 +19,13 @@ const App = () => {
     const [notification, setNotification] = useState('')
 
     //get data from the server
-    useEffect(() => {
-      personService.getAll().then( initList => setPersons(initList))
+    try{
+      useEffect(() => {
+        personService.getAll().then( initList => setPersons(initList))
     }, [])
+  }catch(error){
+    // console.log(error)
+  }
 
 
 
