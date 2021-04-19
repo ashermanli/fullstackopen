@@ -2,9 +2,9 @@ import React from 'react'
 
 const Filter = ({filter,filteredPerson, handleFilter}) =>{
   return(
-  <div>
+  <div className='search-box'>
     <div>Find: <input onChange={handleFilter}/> </div>
-    <div>{filter === '' ? '': filteredPerson.map(person => <p key={person.name}>{person.name} {person.number} </p>)}</div>
+    <div className='search-result'>{filter === '' ? '': filteredPerson.map(person => <p key={person.name}>{person.name} {person.number} </p>)}</div>
 </div>
 )
 }

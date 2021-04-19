@@ -7,6 +7,7 @@ import './index.css'
 import axios from 'axios'
 import personService from './services/person'
 import { __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED } from 'react'
+import './App.css'
 
 const App = () => {
 
@@ -17,6 +18,7 @@ const App = () => {
     const [filter, setFilter] = useState('')
     const [filteredPerson, setFilteredPerson] = useState('')
     const [notification, setNotification] = useState('')
+    
 
     //get data from the server
     try{
@@ -139,16 +141,19 @@ const App = () => {
 
   return(
     <div>
-      <h2>Phonebook</h2>
-      
-      <Notification message={notification ? notification.message? notification.message: notification.error:null} 
-                    className={notification? notification.message? 'success':'error':null} />
-    <Filter filter={filter} filteredPerson={filteredPerson} handleFilter={handleFilter} />
-    <h3>Add someone new</h3>
-    <PersonForm newName = {newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} handleSubmit={handleSubmit}/>
-    <h2>Numbers</h2>
-    <Persons persons={persons} handleRemove = {handleRemove} />
-
+      <div className="functions">
+        <h2>Phonebook</h2>
+        
+        <Notification message={notification ? notification.message? notification.message: notification.error:null} 
+                      className={notification? notification.message? 'success':'error':null} />
+        <Filter filter={filter} filteredPerson={filteredPerson} handleFilter={handleFilter} />
+        <h3>Add someone new</h3>
+        <PersonForm newName = {newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} handleSubmit={handleSubmit}/>
+     </div>
+     <div className="search-box">
+        <h2>Numbers</h2>
+        <Persons persons={persons} handleRemove = {handleRemove} />
+      </div>
     </div>
 
   )

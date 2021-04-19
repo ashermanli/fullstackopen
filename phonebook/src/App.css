@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,33 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+/* Default styles ^^^^^^^ */
+body{
+  margin:0;
+  padding:0;  
+  background-color: black;
+  color: azure;
 }
+
+h2{
+  text-align: center;
+}
+
+.functions{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-box{
+  
+
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
