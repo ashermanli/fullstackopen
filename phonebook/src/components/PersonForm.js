@@ -4,10 +4,10 @@ const PersonForm = ({newName, handleNewName, newNumber, handleNewNumber, handleS
 
 
   return(
-    <div>
+    <div className='add-form'>
       <form onSubmit={handleSubmit}>
         <div>
-          name: <input value={newName} onChange={handleNewName}/>
+          Name: <input value={newName} onChange={handleNewName}/>
         </div>
         <div>
           Number: <input value={newNumber} onChange={handleNewNumber}/>

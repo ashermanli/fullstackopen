@@ -141,19 +141,25 @@ const App = () => {
 
   return(
     <div>
-      <div className="functions">
-        <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
         
         <Notification message={notification ? notification.message? notification.message: notification.error:null} 
                       className={notification? notification.message? 'success':'error':null} />
-        <Filter filter={filter} filteredPerson={filteredPerson} handleFilter={handleFilter} />
-        <h3>Add someone new</h3>
-        <PersonForm newName = {newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} handleSubmit={handleSubmit}/>
-     </div>
-     <div className="search-box">
-        <h2>Numbers</h2>
-        <Persons persons={persons} handleRemove = {handleRemove} />
-      </div>
+        <div className="add">
+          <h2>Add someone new</h2>
+          <PersonForm newName = {newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} handleSubmit={handleSubmit}/>
+        </div>
+     
+     
+      <div className="number-list">
+          <h2>Numbers</h2>
+          <Persons persons={persons} handleRemove = {handleRemove} />
+        </div>
+      
+      <div className="search">
+          
+          <Filter filter={filter} filteredPerson={filteredPerson} handleFilter={handleFilter} />
+        </div>
     </div>
 
   )
