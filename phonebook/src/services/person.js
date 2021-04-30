@@ -8,6 +8,10 @@ const getAll = () =>{
     return request.then(response => response.data)
 }
 
+const getPerson = (id) =>{
+    const request = axios.get(`${baseURL}/${Number(id)}`)
+}
+
 const create = (newPerson) =>{
     const request = axios.post(baseURL, newPerson)
 
