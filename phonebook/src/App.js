@@ -53,7 +53,9 @@ const App = () => {
       //ask the user if they wish to update the current contact
       if(window.confirm(`Do you want to update the number for ${newName}`)=== true){
         personService.update(pers.id, changedPers).then(newEntry => {
-        setPersons(persons.map(person => person.name !== newName ? person: newEntry))
+          let updatedArray = persons.map(person => person.name === newName? newEntry: person)
+          console.log('updating person')
+        setPersons(updatedArray)
         })
 
         //set message on success
