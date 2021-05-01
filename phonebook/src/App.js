@@ -31,7 +31,7 @@ const App = () => {
 
 
 
-
+  /***************||||***************/
   //will handle adding and updating entries
   const handleSubmit = (e)=>{
     e.preventDefault()
@@ -92,11 +92,14 @@ const App = () => {
 
   }
 
+  /***************||||***************/
+  //remove a person from the list
   const handleRemove = (name, id) => {
 
    if(window.confirm(`Delete phone number for ${name}?`) === true) 
     personService.remove(id).then(del => {
-      setPersons(persons.filter(per => per.id !== id))
+      let updatedArray = persons.filter(per => per.id !== id)
+      setPersons(updatedArray)
     }) 
     .catch(error => {
       //if the user does not exist, display an error
@@ -117,12 +120,12 @@ const App = () => {
 
   //functions for dealing with the input fields. 
   const handleNewName = (e) =>{
-    console.log(e.target.value)
+    // console.log(e.target.value)
     setNewName(e.target.value)
   }
 
   const handleNewNumber = (e) =>{
-    console.log(e.target.value)
+    // console.log(e.target.value)
     setNewNumber(e.target.value)
   }
 
