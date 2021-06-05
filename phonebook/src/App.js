@@ -83,15 +83,27 @@ const App = () => {
     }
 
     //add the new person to the server
-    personService.create(newPerson).then(newList => setPersons(persons.concat(newList)))
+    personService.create(newPerson)
+    .then(newPerson => {
+      setPersons(persons.concat(newPerson))
+
     //set message on success, then clear after some time
     setNotification({message: `${newName} has been added`})
     setTimeout(() => {
       setNotification(null)
     }, 5000)
+    })
+    .catch(error => {
+      setNotification({error: error.response.data.error})
+      console.log(error.response.data)
+      setTimeout(() =>{
+        setNotification(null)
+      },5000)
+    })
+      
+    
     setNewName('')
     setNewNumber('')
-
   }
 
   /***************||||***************/
@@ -99,7 +111,8 @@ const App = () => {
   const handleRemove = (name, id) => {
 
    if(window.confirm(`Delete phone number for ${name}?`) === true) 
-    personService.remove(id).then(del => {
+    personService.remove(id)
+    .then(del => {
       let updatedArray = persons.filter(per => per.id !== id)
       setPersons(updatedArray)
     }) 
