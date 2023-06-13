@@ -1,3 +1,7 @@
 [submodule "phonebook-backend"]
 	path = phonebook-backend
 	url = https://github.com/ashermanli/phonebook-backend
+
+[submodule "phonebook-backend"]
+	path = bloglist
+	url = https://github.com/ashermanli/bloglist
