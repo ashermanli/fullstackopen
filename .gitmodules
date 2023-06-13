@@ -1,6 +1,6 @@
-[submodule "bloglist"]
-	path = bloglist
-	url = https://github.com/ashermanli/bloglist
+#[submodule "bloglist"]
+#	path = bloglist
+#	url = https://github.com/ashermanli/bloglist
 [submodule "phonebook-backend"]
 	path = phonebook-backend
 	url = https://github.com/ashermanli/phonebook-backend
