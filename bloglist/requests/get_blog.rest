@@ -1,0 +1,8 @@
+
+GET https://restcountries.com/v3.1/all
+
+###
+GET http://localhost:3003/api/bloglist
+
+###
+GET http://localhost:3003/api/blogs/
