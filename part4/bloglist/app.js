@@ -11,20 +11,20 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const params = {
 	useNewUrlParser: true,
-	useUnifiedTopology: true , 
+	useUnifiedTopology: true ,
 	dbName: 'phonebook-app'
-  }
+}
 
 
 
 //Connection string and instance
 const mongoURL = config.MONGODB_URI
 // const mongoURL = 'mongodb://localhost/bloglist'
-const dbConnection = mongoose.connect(mongoURL, params)
-.then(() => logger.info('connected to mongodb'))
-.catch((e) => {
-	logger.error('couldnt connect', e)
-})
+mongoose.connect(mongoURL, params)
+	.then(() => logger.info('connected to mongodb'))
+	.catch((e) => {
+		logger.error('couldnt connect', e)
+	})
 
 
 
@@ -39,11 +39,5 @@ app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
 
-
-// const PORT = 3004
-
-//app.listen(PORT, () =>{
-//	logger.info(`Server running on port ${PORT}`)
-//})
 
 module.exports = app
