@@ -77,11 +77,8 @@ const dummy = (blogs) => {
 }
 
 const totalLikes = (blogs) => {
-	//console.log('here ', blogs)
 	let sum = 0
 	if(Array.isArray(blogs)) {
-		console.log('we are here')
-		console.log('blogs')
 		blogs.forEach(blog => sum = sum + blog.likes)
 		return blogs.length === 0
 			? 0
@@ -89,15 +86,35 @@ const totalLikes = (blogs) => {
 
 	}
 	else{
-		console.log(typeof(blogs))
 		return blogs.likes
 	}
 
 
 }
 
+const favoriteBlog = (blogs) => {
+	if(Object.keys(blogs).length === 0) return blogs
+	console.log('hello')
+	let max =  0
+	let favorite = {}
+	blogs.forEach(blog => {
+		if(blog.likes > max){
+			//const {title, author, likes} = blog
+			max = blog.likes
+			let {title, author, likes} = blog
+			favorite.title = title
+			favorite.author = author
+			favorite.likes = likes
+		}
+	})
+
+	console.log(favorite)
+	return favorite
+}
+
 module.exports = {
 	dummy,
 	blogs,
-	totalLikes
+	totalLikes,
+	favoriteBlog
 }
