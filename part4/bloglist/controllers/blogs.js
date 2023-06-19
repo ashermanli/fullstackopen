@@ -5,21 +5,22 @@ const Blog = require('../models/blog')
 blogsRouter.get('/', (request, response) => {
 	Blog.find({})
 		.then(blogs => {
-			console.log(blogs)
+			//console.log(blogs)
 			response.json(blogs)
 		})
-	//response.send('<h1>Hello world</h1>')
+	//response.send('<h1>Hello world test</h1>')
 })
 
-blogsRouter.get('/api/blogs', (request, response) => {
+/*blogsRouter.get('/api/blogs', (request, response) => {
 	Blog.find({})
 		.then(blogs => {
 			console.log(blogs)
 			response.json(blogs)
 		})
-})
+})*/
 
-blogsRouter.post('/api/blogs', (request, response) => {
+blogsRouter.post('/', (request, response) => {
+
 	const blog = new Blog(request.body)
 
 	blog.save()
