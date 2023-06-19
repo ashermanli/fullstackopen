@@ -8,19 +8,12 @@ const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
 
-mongoose.set('strictQuery', false)
-const params = {
-	useNewUrlParser: true,
-	useUnifiedTopology: true ,
-	dbName: 'phonebook-app'
-}
-
-
 
 //Connection string and instance
 const mongoURL = config.MONGODB_URI
+console.log(mongoURL)
 // const mongoURL = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoURL, params)
+mongoose.connect(mongoURL)
 	.then(() => logger.info('connected to mongodb'))
 	.catch((e) => {
 		logger.error('couldnt connect', e)
@@ -33,6 +26,8 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+//for router to be used, url starts with /api/blogs
+//e.g. localhost:3005/api/blogs
 app.use('/api/blogs', blogsRouter)
 
 app.use(middleware.unknownEndpoint)
