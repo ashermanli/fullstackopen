@@ -101,7 +101,7 @@ const favoriteBlog = (blogs) => {
 		if(blog.likes > max){
 			//const {title, author, likes} = blog
 			max = blog.likes
-			let {title, author, likes} = blog
+			let { title, author, likes } = blog
 			favorite.title = title
 			favorite.author = author
 			favorite.likes = likes
