@@ -1,0 +1,9 @@
+PUT http://localhost:3005/api/blogs/6499f0fe6365abcc35ce63ba HTTP/1.1
+Content-Type: application/json
+
+{
+ "title": "Ziran", 
+ "author": "The tester", 
+ "url": "across the universe", 
+ "likes": 2
+}
