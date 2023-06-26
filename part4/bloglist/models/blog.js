@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 
 //Schema for the blog post
 const blogSchema = new mongoose.Schema({
-	title: String,
+	title: { type: String, required: true },
 	author: String,
-	url: String,
+	url: { type: String, required: true },
 	likes: Number
 
 })
@@ -12,7 +12,7 @@ const blogSchema = new mongoose.Schema({
 blogSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
 		returnedObject.id = returnedObject._id.toString()
-		delete returnedObject.__id
+		delete returnedObject._id
 		delete returnedObject.__v
 	}
 })
