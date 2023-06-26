@@ -7,8 +7,6 @@ mongoose.set('bufferTimeoutMS', 30000)
 
 const api = supertest(app)
 
-
-
 beforeEach(async () => {
 	await Blog.deleteMany({})
 
