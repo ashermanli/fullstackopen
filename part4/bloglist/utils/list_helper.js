@@ -73,7 +73,8 @@ const blogs = [
 
 
 const dummy = (blogs) => {
-	return 1
+	blogs = 1
+	return blogs
 }
 
 const totalLikes = (blogs) => {
