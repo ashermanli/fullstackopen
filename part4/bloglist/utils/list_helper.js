@@ -95,7 +95,6 @@ const totalLikes = (blogs) => {
 
 const favoriteBlog = (blogs) => {
 	if(Object.keys(blogs).length === 0) return blogs
-	console.log('hello')
 	let max =  0
 	let favorite = {}
 	blogs.forEach(blog => {
@@ -109,7 +108,6 @@ const favoriteBlog = (blogs) => {
 		}
 	})
 
-	console.log(favorite)
 	return favorite
 }
 

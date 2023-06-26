@@ -16,7 +16,7 @@ const initialBlogs = [
 ]
 
 const nonExistingBlog = async () => {
-	const blog = new Blog({ title: 'willremovethissoon' })
+	const blog = new Blog({ title: 'willremovethissoon', url:'willremovesoon.com' })
 	await blog.save()
 	await blog.deleteOne()
 
