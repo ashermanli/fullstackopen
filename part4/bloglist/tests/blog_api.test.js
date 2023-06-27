@@ -82,10 +82,12 @@ describe('viewing a specific blog', () => {
 
 describe('adding a new blog', () => {
 	test('a valid blog can be added', async () => {
+		const users = await helper.usersInDb()
 		const newBlog = {
 			title: 'async/await simplifies making async calls',
 			url: 'async',
-			likes: 100
+			likes: 100,
+			user: users[0].id
 		}
 
 		await api.post('/api/blogs')
