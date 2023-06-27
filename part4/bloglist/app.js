@@ -5,6 +5,7 @@ require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
@@ -29,6 +30,7 @@ app.use(middleware.requestLogger)
 //for router to be used, url starts with /api/blogs
 //e.g. localhost:3005/api/blogs
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users',usersRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
