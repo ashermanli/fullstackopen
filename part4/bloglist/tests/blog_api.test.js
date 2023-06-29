@@ -82,7 +82,6 @@ describe('when there is initially some blogs saved', () => {
 
 	test('all blogs are returned', async () => {
 		const response = await api.get('/api/blogs')
-		console.log(response.body)
 
 		expect(response.body).toHaveLength(helper.initialBlogs.length)
 	}, 100000)
@@ -102,7 +101,6 @@ describe('viewing a specific blog', () => {
 		let blogToView = blogsAtStart[0]
 		blogToView = { ...blogToView, user:user.id }
 
-		console.log(blogToView)
 		const resultBlog = await api
 			.get(`/api/blogs/${blogToView.id}`)
 			.expect(200)
