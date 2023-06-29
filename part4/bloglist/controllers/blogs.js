@@ -33,7 +33,7 @@ blogsRouter.post('/', async (request, response) => {
 		return response.status(401).json({ error: 'token invalid' })
 	}
 
-	const user = await User.findById(decodedToken.id)
+	let user = await User.findById(decodedToken.id)
 
 	const blog = new Blog({
 		title: body.title,
@@ -42,9 +42,12 @@ blogsRouter.post('/', async (request, response) => {
 		...body
 	})
 
+	console.log('user: ', user)
+
 	const savedBlog = await blog.save()
-	user.blogs = user.blogs.concat(savedBlog._id)
-	await user.save()
+	console.log('saved blog: ', savedBlog)
+	user.blogs =await user.blogs.concat(savedBlog.id)
+	console.log(user)
 	response.status(201).json(savedBlog)
 })
 
@@ -61,14 +64,23 @@ blogsRouter.put('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-	const id = request.params.id
+	const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-	const result = await Blog.findByIdAndRemove(id)
+	console.log('decoded token : ', decodedToken)
+	if(!decodedToken.id) {
+		return response.status(401).json({ error: 'token invalid' })
+	}
 
-	console.log(result)
-	console.log('item has been deleted')
+	console.log('request: ', request.params)
+	const stagedBlog = await Blog.findById(request.params.id)
+	console.log('route search for id: ', stagedBlog)
+	//const id = request.params.id
 
-	response.status(204).end()
+	const result = await Blog.findByIdAndRemove(stagedBlog)
+
+
+
+	response.status(204).json(result).end()
 })
 
 module.exports = blogsRouter
