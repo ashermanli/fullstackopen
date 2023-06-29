@@ -16,7 +16,6 @@ beforeEach(async () => {
 	const users = await helper.usersInDb()
 	let activeUser = users[0]
 	activeUser = { ...activeUser, password:'test' }
-	console.log('users : ', users)
 
 	const fetchUser = await api.post('/api/login')
 		.send(activeUser)
@@ -27,24 +26,23 @@ beforeEach(async () => {
 
 	user = await User.findOne(activeUser)
 
-	console.log('Fetching user: ', user)
 
 	const blogObjects = helper.initialBlogs.map(blog => blog = { ...blog, user:user.id })
 	await Promise.all(blogObjects)
 
-	console.log('blog objects :', blogObjects)
 
 	const mongoObjArray = blogObjects.map(async (blog) => {
 		blog = new Blog(blog)
 		await blog.save()
 	})
 	await Promise.all(mongoObjArray)
-	console.log('mongo objects :', mongoObjArray)
 
 	const modBlogs = await helper.blogsInDb()
 	modBlogs.forEach(blog => {
+		user.blogs = modBlogs
 		user.blogs = user.blogs.concat(blog.id)
 	})
+
 
 	await user.save()
 
@@ -115,7 +113,6 @@ describe('viewing a specific blog', () => {
 
 	test('fails with 404 if it does not exist', async () => {
 		const invalid = await helper.nonExistingBlog()
-		console.log(helper.nonExistingBlog())
 		await api
 			.get(`/api/blogs/${invalid}`)
 			.expect(404)
@@ -177,8 +174,6 @@ describe('adding a new blog', () => {
 			user: user.id
 		}
 
-		console.log(user)
-		console.log(userToken)
 		await api
 			.post('/api/blogs')
 			.set('authorization', `Bearer ${userToken}`)
@@ -223,13 +218,7 @@ describe('deletion of a blog', () => {
 		const blogsAtStart = await helper.blogsInDb()
 		const blogToDelete = blogsAtStart[0]
 
-		if(!blogsAtStart) console.log('there are no blogs')
-
-		console.log('blog at start: ', blogsAtStart)
-
-		console.log('blog to delete: ',blogToDelete.id)
-		console.log('user id: ', user.id)
-		console.log('user token: ', userToken)
+		if(!blogsAtStart)
 		expect(blogToDelete.user.toString()).toContain(user.id)
 
 		await api
@@ -238,8 +227,6 @@ describe('deletion of a blog', () => {
 			.expect(204)
 
 		const blogsAtEnd = await helper.blogsInDb()
-
-		console.log('blogs at the end', blogsAtEnd)
 
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length -1)
 

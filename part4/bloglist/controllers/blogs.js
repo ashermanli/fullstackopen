@@ -38,17 +38,16 @@ blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog({
 		title: body.title,
 		likes: body.likes ? body.likes: 0,
-		user:user,
+		user:user.id,
 		...body
 	})
 
-	console.log('user: ', user)
-
 	const savedBlog = await blog.save()
-	console.log('saved blog: ', savedBlog)
-	user.blogs = user.blogs.concat(savedBlog.id)
+
+	user.blogs = await Blog.find({})
+	user.blogs = user.blogs.concat(savedBlog)
 	await user.save()
-	console.log('user after concat: ', user)
+
 	response.status(201).json(savedBlog)
 })
 
@@ -67,19 +66,20 @@ blogsRouter.put('/:id', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
 	const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-	console.log('decoded token : ', decodedToken)
 	if(!decodedToken.id) {
 		return response.status(401).json({ error: 'token invalid' })
 	}
 
-	console.log('request: ', request.params)
+	let user = await User.findById(decodedToken.id)
+
 	const stagedBlog = await Blog.findById(request.params.id)
-	console.log('route search for id: ', stagedBlog)
-	//const id = request.params.id
 
 	const result = await Blog.findByIdAndRemove(stagedBlog)
 
+	user.blogs = await Blog.find({})
+	await user.save()
 
+	console.log('user blogs: ', user.blogs)
 
 	response.status(204).json(result).end()
 })
