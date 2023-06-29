@@ -28,17 +28,22 @@ blogsRouter.post('/', async (request, response) => {
 
 	const body = request.body
 	const decodedToken = jwt.verify(request.token, process.env.SECRET)
+	let userHeaderID
 
 	if(!decodedToken.id) {
 		return response.status(401).json({ error: 'token invalid' })
 	}
 
-	let user = await User.findById(decodedToken.id)
+	if(!request.user){
+		return response.status(401).json({ error: 'missing user header' })
+	} else userHeaderID = request.user
+
+	let user = await User.findById(userHeaderID)
 
 	const blog = new Blog({
 		title: body.title,
 		likes: body.likes ? body.likes: 0,
-		user:user.id,
+		user:userHeaderID,
 		...body
 	})
 
@@ -65,12 +70,16 @@ blogsRouter.put('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
 	const decodedToken = jwt.verify(request.token, process.env.SECRET)
+	let userHeaderID
 
 	if(!decodedToken.id) {
 		return response.status(401).json({ error: 'token invalid' })
 	}
+	if(!request.user){
+		return response.status(401).json({ error: 'missing user header' })
+	} else userHeaderID = request.user
 
-	let user = await User.findById(decodedToken.id)
+	let user = await User.findById(userHeaderID)
 
 	const stagedBlog = await Blog.findById(request.params.id)
 
