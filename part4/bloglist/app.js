@@ -28,7 +28,7 @@ app.use(middleware.tokenExtractor)
 
 //for router to be used, url starts with /api/blogs
 //e.g. localhost:3005/api/blogs
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', middleware.userExtractor, blogsRouter)
 app.use('/api/users',usersRouter)
 app.use('/api/login', loginRouter)
 

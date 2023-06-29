@@ -20,6 +20,14 @@ const tokenExtractor = (request, response, next) => {
 
 }
 
+const userExtractor = (request, response, next) => {
+	let user = request.get('user')
+	if(user) {
+		request.user = user
+	}
+	next()
+}
+
 const errorHandler = (error, request, response, next) => {
 
 	logger.error('this is the error: ', error.message)
@@ -46,5 +54,6 @@ module.exports = {
 	requestLogger,
 	unknownEndpoint,
 	errorHandler,
-	tokenExtractor
+	tokenExtractor,
+	userExtractor
 }
