@@ -3,18 +3,59 @@ const helper = require('./test_helper')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 mongoose.set('bufferTimeoutMS', 30000)
 
 const api = supertest(app)
+let userToken
+let user
 
 beforeEach(async () => {
 	await Blog.deleteMany({})
 
-	const blogObjects = helper.initialBlogs
-		.map(blog => new Blog(blog))
+	const users = await helper.usersInDb()
+	let activeUser = users[0]
+	activeUser = { ...activeUser, password:'test' }
+	console.log('users : ', users)
 
-	const promiseArray = blogObjects.map(blog => blog.save())
-	await Promise.all(promiseArray)
+	const fetchUser = await api.post('/api/login')
+		.send(activeUser)
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
+
+	userToken = fetchUser.body.token
+
+	user = await User.findOne(activeUser)
+
+	console.log('Fetching user: ', user)
+
+	const blogObjects = helper.initialBlogs.map(blog => blog = { ...blog, user:user.id })
+	await Promise.all(blogObjects)
+
+	console.log('blog objects :', blogObjects)
+
+	const mongoObjArray = blogObjects.map(async (blog) => {
+		blog = new Blog(blog)
+		await blog.save()
+	})
+	await Promise.all(mongoObjArray)
+	console.log('mongo objects :', mongoObjArray)
+
+	// try{
+	// const savedArray = await promiseArray.forEach(blog => blog.save())
+	// } catch(error) {throw error}
+
+	/*
+	console.log(blogObjects)
+	console.log(savedArray)
+
+
+	const blogToUserArray = savedArray.forEach(blog => console.log('promise blog ', blog))
+	await Promise.all(blogToUserArray)
+
+	console.log(blogToUserArray)
+*/
+
 
 
 },100000)
@@ -36,7 +77,7 @@ describe('when there is initially some blogs saved', () => {
 
 	test('all blogs are returned', async () => {
 		const response = await api.get('/api/blogs')
-		//console.log(response.body)
+		console.log(response.body)
 
 		expect(response.body).toHaveLength(helper.initialBlogs.length)
 	}, 100000)
@@ -45,7 +86,7 @@ describe('when there is initially some blogs saved', () => {
 		const response = await api.get('/api/blogs')
 
 		const contents = response.body.map(r => r.title)
-		expect(contents).toContain('Ziran')
+		expect(contents).toContain('Blog1')
 	})
 })
 
@@ -53,8 +94,10 @@ describe('viewing a specific blog', () => {
 	test('succeeds with a valid id', async () => {
 		const blogsAtStart = await helper.blogsInDb()
 
-		const blogToView = blogsAtStart[0]
+		let blogToView = blogsAtStart[0]
+		blogToView = { ...blogToView, user:user.id }
 
+		console.log(blogToView)
 		const resultBlog = await api
 			.get(`/api/blogs/${blogToView.id}`)
 			.expect(200)
@@ -81,19 +124,22 @@ describe('viewing a specific blog', () => {
 })
 
 describe('adding a new blog', () => {
+
 	test('a valid blog can be added', async () => {
-		const users = await helper.usersInDb()
+
 		const newBlog = {
 			title: 'async/await simplifies making async calls',
 			url: 'async',
 			likes: 100,
-			user: users[0].id
+			user: user.id
 		}
 
 		await api.post('/api/blogs')
+			.set('authorization', `Bearer ${userToken}`)
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
+
 
 		const blogsAtEnd = await helper.blogsInDb()
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
@@ -107,7 +153,8 @@ describe('adding a new blog', () => {
 		const blogsAtStart =  await helper.blogsInDb()
 		const newBlog = {
 			...blogsAtStart[0],
-			likes:25
+			likes:25,
+			user: user.id
 		}
 
 		await api
@@ -119,13 +166,21 @@ describe('adding a new blog', () => {
 	test('blog without url is not added', async () => {
 		const noURL = {
 			title: 'no-url',
-			likes: 10
+			likes: 10,
+			user: user.id
 		}
 
+		console.log(user)
+		console.log(userToken)
 		await api
 			.post('/api/blogs')
+			.set('authorization', `Bearer ${userToken}`)
 			.send(noURL)
 			.expect(400)
+			// .end((err, res) => {
+			// 	if(err) throw err
+			// })
+
 
 		const blogsAtEnd = await helper.blogsInDb()
 
@@ -135,11 +190,13 @@ describe('adding a new blog', () => {
 	test('blog without title is not added', async () => {
 		const noTitle = {
 			url: 'no-title',
-			likes:25
+			likes:25,
+			user: user.id
 		}
 
 		await api
 			.post('/api/blogs')
+			.set('authorization', `Bearer ${userToken}`)
 			.send(noTitle)
 			.expect(400)
 
@@ -154,16 +211,28 @@ describe('adding a new blog', () => {
 
 
 describe('deletion of a blog', () => {
+
 	test('Succeeds with status 204 if valid id', async () => {
 		const blogsAtStart = await helper.blogsInDb()
-
 		const blogToDelete = blogsAtStart[0]
+
+		if(!blogsAtStart) console.log('there are no blogs')
+
+		console.log('blog at start: ', blogsAtStart)
+
+		console.log('blog to delete: ',blogToDelete.id)
+		console.log('user id: ', user.id)
+		console.log('user token: ', userToken)
+		expect(blogToDelete.user.toString()).toContain(user.id)
 
 		await api
 			.delete(`/api/blogs/${blogToDelete.id}`)
+			.set('authorization', `Bearer ${userToken}`)
 			.expect(204)
 
 		const blogsAtEnd = await helper.blogsInDb()
+
+		console.log('blogs at the end', blogsAtEnd)
 
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length -1)
 
