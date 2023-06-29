@@ -1,11 +1,23 @@
-POST http://localhost:3005/api/blogs/ HTTP/1.1
+POST http://localhost:3006/api/blogs/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NDliMTRhNDdjMWE5YjFhYmQ5ZjQ0NDUiLCJpYXQiOjE2ODc5MTc1MjYsImV4cCI6MTY4NzkyMTEyNn0.9BdB2-MHpTEh0oHdKBhQj73VAU_oGyBQwCUVTEPM2MM
 
 {
  "user": "649b14a47c1a9b1abd9f4445",
- "title": "Testing my patience", 
+ "title": "Request", 
+ "author": "vscode", 
+ "url": "POST", 
+ "likes": 9000
+}
+
+###
+POST http://localhost:3006/api/blogs/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NDliMTRhNDdjMWE5YjFhYmQ5ZjQ0NDUiLCJpYXQiOjE2ODc5NzI5OTYsImV4cCI6MTY4Nzk3NjU5Nn0.pPv9HzvXLrMjlqUU_vd0OIpOVmd3MyMGBiA5QcXh3Rg
+
+{
+ "user": "",
+ "title": "nourl",
  "author": "The diverse", 
- "url": "across the universe", 
  "likes": 9000
 }

@@ -12,7 +12,6 @@ const tokenExtractor = (request, response, next) => {
 
 	let authorization = request.get('authorization')
 	if(authorization && authorization.startsWith('Bearer')){
-		console.log('we are in the extractor')
 		authorization = authorization.replace('Bearer ', '')
 		request.token = authorization
 
@@ -23,7 +22,6 @@ const tokenExtractor = (request, response, next) => {
 
 const errorHandler = (error, request, response, next) => {
 
-	console.log('we are in the error handler')
 	logger.error('this is the error: ', error.message)
 
 	if(error.name === 'CastError'){
