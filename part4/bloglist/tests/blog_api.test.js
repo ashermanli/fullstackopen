@@ -41,6 +41,13 @@ beforeEach(async () => {
 	await Promise.all(mongoObjArray)
 	console.log('mongo objects :', mongoObjArray)
 
+	const modBlogs = await helper.blogsInDb()
+	modBlogs.forEach(blog => {
+		user.blogs = user.blogs.concat(blog.id)
+	})
+
+	await user.save()
+
 	// try{
 	// const savedArray = await promiseArray.forEach(blog => blog.save())
 	// } catch(error) {throw error}
