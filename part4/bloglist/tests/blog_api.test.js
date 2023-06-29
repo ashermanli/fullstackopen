@@ -140,6 +140,7 @@ describe('adding a new blog', () => {
 
 		await api.post('/api/blogs')
 			.set('authorization', `Bearer ${userToken}`)
+			.set('user', user.id)
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
@@ -177,6 +178,7 @@ describe('adding a new blog', () => {
 		await api
 			.post('/api/blogs')
 			.set('authorization', `Bearer ${userToken}`)
+			.set('user', user.id)
 			.send(noURL)
 			.expect(400)
 			// .end((err, res) => {
@@ -199,6 +201,7 @@ describe('adding a new blog', () => {
 		await api
 			.post('/api/blogs')
 			.set('authorization', `Bearer ${userToken}`)
+			.set('user', user.id)
 			.send(noTitle)
 			.expect(400)
 
@@ -219,10 +222,11 @@ describe('deletion of a blog', () => {
 		const blogToDelete = blogsAtStart[0]
 
 		if(!blogsAtStart)
-		expect(blogToDelete.user.toString()).toContain(user.id)
+			expect(blogToDelete.user.toString()).toContain(user.id)
 
 		await api
 			.delete(`/api/blogs/${blogToDelete.id}`)
+			.set('user', user.id)
 			.set('authorization', `Bearer ${userToken}`)
 			.expect(204)
 
