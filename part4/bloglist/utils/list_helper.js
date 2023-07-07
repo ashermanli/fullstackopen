@@ -1,9 +1,12 @@
+const _ = require('lodash')
+const blog = require('../models/blog')
+
 const blogs = [
 	{
 		'title': 'eo',
 		'author': 'the omnipotent',
 		'url': 'eo.com',
-		'likes': 100
+		'likes': 10
 	},
 
 	{
@@ -45,6 +48,22 @@ const blogs = [
 		__v: 0
 	},
 	{
+		_id: '5a422b3a1b54a676234d17f9',
+		title: 'Canonical string reduction',
+		author: 'Edsger W. Dijkstra',
+		url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+		likes: 12,
+		__v: 0
+	},
+	{
+		_id: '5a422b3a1b54a676234d17f9',
+		title: 'Canonical string reduction',
+		author: 'Edsger W. Dijkstra',
+		url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+		likes: 13,
+		__v: 0
+	},
+	{
 		_id: '5a422b891b54a676234d17fa',
 		title: 'First class tests',
 		author: 'Robert C. Martin',
@@ -83,8 +102,8 @@ const totalLikes = (blogs) => {
 		blogs.forEach(blog => sum = sum + blog.likes)
 		return blogs.length === 0
 			? 0
-			: sum
 
+			: sum
 	}
 	else{
 		return blogs.likes
@@ -111,9 +130,39 @@ const favoriteBlog = (blogs) => {
 	return favorite
 }
 
+const mostBlogs = (blogs) => {
+	if(Object.keys(blogs).length === 0) return blogs
+
+	const mostB = _(blogs)
+		.countBy('author')
+		.map((key, value) => {return { name:value, frequency: key }})
+		.sortBy('frequency')
+		.entries()
+		.reverse()
+		.head()[1].name
+
+
+	return mostB
+}
+
+const mostLikes = (blogs) => {
+	let most = _(blogs).groupBy('author')
+		.map((objs, b) => {return {
+			author: b,
+			likes: _.sumBy(objs, 'likes')
+		}})
+		.sortBy('likes')
+		.reverse()
+		.value()
+
+	return _(most).head().author
+}
+
 module.exports = {
 	dummy,
 	blogs,
 	totalLikes,
-	favoriteBlog
+	favoriteBlog,
+	mostBlogs,
+	mostLikes
 }
