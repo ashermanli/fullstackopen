@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import blogService from '../services/blogs'
+import { useEffect, useState } from 'react'
 
 import Blog from '../components/Blog'
 import BlogEntry from '../components/BlogEntry'
+import blogService from '../services/blogs'
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
@@ -22,8 +22,8 @@ const App = () => {
 
 	return (
 		<>
-			<h1>App Body</h1>
-			<form onSubmit={handleLogin}>
+			<h1 className="text-center">App Body</h1>
+			<form className="flex flex-col" onSubmit={handleLogin}>
 				<label htmlFor="username">Username</label>
 				<input
 					type="text"
@@ -40,8 +40,8 @@ const App = () => {
 				/>
 				<button type="submit">Login</button>
 			</form>
-			<div></div>
-		-</>
+			<div></div>-
+		</>
 	)
 }
 
