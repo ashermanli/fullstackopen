@@ -19,7 +19,18 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3006/api/users/ HTTP/1.1
+POST http://localhost:3005/api/users/ HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "test",
+	"name": "test",
+	"password": "test"
+}
+
+###
+
+POST  http://localhost:3005/api/users/ HTTP/1.1
 Content-Type: application/json
 
 {
