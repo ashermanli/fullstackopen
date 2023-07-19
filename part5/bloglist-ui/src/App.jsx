@@ -10,10 +10,9 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
-	const [errorMessage, setErrorMessage] = useState('')
+	// const [errorMessage, setErrorMessage] = useState('')
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
-	const [newBlog, setNewBlog] = useState(null)
 
 	useEffect(() => {
 		blogService.getAll().then((blogs) => {
@@ -42,6 +41,7 @@ const App = () => {
 
 	const addBlog = (e) => {
 		e.preventDefault()
+
 		const blog = {
 			title: title,
 			author: author,
@@ -52,6 +52,8 @@ const App = () => {
 		blogService.create(blog).then((blog) => {
 			setBlogs([...blogs, blog])
 		})
+		setTitle('')
+		setAuthor('')
 	}
 
 	const loginForm = () => (
@@ -86,6 +88,7 @@ const App = () => {
 			<form onSubmit={addBlog} className="flex flex-col">
 				<label htmlFor="title">Title</label>
 				<input
+					className="border-2 border-solid border-gray-400"
 					type="text"
 					id="title"
 					value={title}
@@ -93,6 +96,7 @@ const App = () => {
 				/>
 				<label htmlFor="author">Author</label>
 				<input
+					className="border-2 border-solid border-gray-400"
 					type="text"
 					id="author"
 					value={author}
@@ -106,7 +110,9 @@ const App = () => {
 
 	return (
 		<>
-			<h1 className="text-center">Bloglist</h1>
+			<h1 className="text-center">
+				{user === null ? 'Bloglist' : user.username}
+			</h1>
 			{user === null ? (
 				<div>{loginForm()}</div>
 			) : (
