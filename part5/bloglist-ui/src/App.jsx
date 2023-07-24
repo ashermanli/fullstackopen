@@ -18,6 +18,13 @@ const App = () => {
 		blogService.getAll().then((blogs) => {
 			setBlogs(blogs)
 		})
+
+		const loggedUserJSON = window.localStorage.getItem('loggedUser')
+		if (loggedUserJSON) {
+			const JSONUser = JSON.parse(loggedUserJSON)
+			setUser(JSONUser)
+			blogService.setToken(JSONUser.token)
+		}
 	}, [])
 
 	const handleLogin = async (event) => {
@@ -26,6 +33,7 @@ const App = () => {
 
 		try {
 			const user = await loginService.login({ username, password })
+			window.localStorage.setItem('loggedUser', JSON.stringify(user))
 			setUser(user)
 			blogService.setToken(user.token)
 			setUsername('')
@@ -37,6 +45,11 @@ const App = () => {
 				setErrorMessage(null)
 			}, 5000)
 		}
+	}
+
+	const handleLogout = () => {
+		window.localStorage.removeItem('loggedUser')
+		setUser(null)
 	}
 
 	const addBlog = (e) => {
@@ -78,10 +91,15 @@ const App = () => {
 
 	const blogForm = () => (
 		<>
-			<ul className="border-2 border-solid border-red-500 text-blue-500">
+			<ul className="  flex w-[500px] shrink flex-wrap justify-center  text-blue-500">
 				{blogs.map((blog) => (
-					<li className="border-solid " key={blog.id}>
-						{blog.author}: {blog.title}
+					<li
+						className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
+						key={blog.blogId}
+					>
+						<span>Title: {blog.title}</span>
+						<span>Author: {blog.author}</span>
+						<button>Delete</button>
 					</li>
 				))}
 			</ul>
@@ -109,19 +127,38 @@ const App = () => {
 	)
 
 	return (
-		<>
-			<h1 className="text-center">
-				{user === null ? 'Bloglist' : user.username}
-			</h1>
+		<div className="flex w-screen flex-col justify-center">
 			{user === null ? (
-				<div>{loginForm()}</div>
+				<div className="grid w-screen grid-cols-3 px-2">
+					<div></div>
+					<h1>Please login</h1>
+					<div></div>
+				</div>
 			) : (
-				<div>
-					<p>{user.username}</p>
-					{blogForm()}
+				<div className="grid w-screen grid-cols-3 px-2">
+					<h1>Welcome to my Blog</h1>
+					<h2 className="text-center">{user.username}</h2>
+					<button
+						className="justify-self-end"
+						type="submit"
+						onClick={handleLogout}
+					>
+						Logout
+					</button>
 				</div>
 			)}
-		</>
+
+			<div className="flex justify-center">
+				{user === null ? (
+					<div>{loginForm()}</div>
+				) : (
+					<div>
+						<p>{user.username}</p>
+						{blogForm()}
+					</div>
+				)}
+			</div>
+		</div>
 	)
 }
 
