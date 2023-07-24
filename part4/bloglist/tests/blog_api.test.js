@@ -50,17 +50,6 @@ beforeEach(async () => {
 	// try{
 	// const savedArray = await promiseArray.forEach(blog => blog.save())
 	// } catch(error) {throw error}
-
-	/*
-	console.log(blogObjects)
-	console.log(savedArray)
-
-
-	const blogToUserArray = savedArray.forEach(blog => console.log('promise blog ', blog))
-	await Promise.all(blogToUserArray)
-
-	console.log(blogToUserArray)
-*/
 }, 100000)
 
 describe('when there is initially some blogs saved', () => {
@@ -94,7 +83,6 @@ describe('when there is initially some blogs saved', () => {
 describe('viewing a specific blog', () => {
 	test('succeeds with a valid id', async () => {
 		const blogsAtStart = await helper.blogsInDb()
-		console.log(blogsAtStart[0])
 
 		let blogToView = blogsAtStart[0]
 		blogToView = {
@@ -102,20 +90,12 @@ describe('viewing a specific blog', () => {
 			user: user.id.toString(),
 			blogId: blogToView.blogId.toString(),
 		}
-		blogToView = {
-			...blogToView,
-			// blogId: blogId.id,
-			user: user.id,
-		}
-
-		console.log(blogToView)
 
 		const resultBlog = await api
 			.get(`/api/blogs/${blogToView.blogId}`)
 			.set('authorization', `Bearer ${userToken}`)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
-		console.log(resultBlog.body)
 
 		expect(resultBlog.body).toEqual(blogToView)
 	}, 100000)
