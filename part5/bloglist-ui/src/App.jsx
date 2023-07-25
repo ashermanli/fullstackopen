@@ -14,10 +14,11 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
-	const [errorMessage, setErrorMessage] = useState('')
+	const [actionStatus, setActionStatus] = useState('')
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
 
+	//checks local storage if user previously logged in
 	useEffect(() => {
 		if ('loggedUser' in localStorage && !user) {
 			const JSONUser = JSON.parse(window.localStorage.getItem('loggedUser'))
@@ -30,18 +31,31 @@ const App = () => {
 		}
 	}, [user])
 
+	//fetches all blogs on initial render
 	useEffect(() => {
 		blogService.getAll().then((blogs) => {
 			setBlogs(blogs)
 		})
 	}, [])
 
+	//updates userblogs in local storage
 	useEffect(() => {
 		//!After adding a blog, The state will be updated on the next render
 		//?We use an effect once to cause a render and gather our new data and store it in localStorage
 		console.log(userBlogs)
 		window.localStorage.setItem('storedBlogs', JSON.stringify(userBlogs))
 	}, [userBlogs])
+
+	useEffect(() => {
+		if (actionStatus) {
+			actionStatus.error
+				? console.log(actionStatus.error)
+				: console.log(actionStatus.notification)
+		}
+		setTimeout(() => {
+			setActionStatus(null)
+		}, 5000)
+	}, [actionStatus])
 
 	const restoreData = (user, blogs) => {
 		setUserBlogs(blogs)
@@ -65,17 +79,15 @@ const App = () => {
 			setUserBlogs(uBlogs)
 			window.localStorage.setItem('storedBlogs', JSON.stringify(uBlogs))
 			console.log(userBlogs)
+			setActionStatus({ notification: 'login successful' })
 		} catch (exception) {
-			setErrorMessage('Wrong credentials')
-			setTimeout(() => {
-				console.log(errorMessage)
-				setErrorMessage(null)
-			}, 5000)
+			setActionStatus({ error: 'wrong credentials' })
 		}
 	}
 
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedUser')
+		window.localStorage.removeItem('storedBlogs')
 		setUser(null)
 		setUserBlogs([])
 	}
@@ -91,22 +103,15 @@ const App = () => {
 			user: user.id,
 		}
 
-		const savedBlog = await blogService.create(blog)
-
-		setUserBlogs([...userBlogs, savedBlog])
-		// blogService
-		// 	.create(blog)
-		// 	.then((blog) => {
-		// 		setUserBlogs([...userBlogs, blog])
-		// 	})
-		// 	.then(() => {
-		// 		console.log('these are the blogs', userBlogs)
-		// 		window.localStorage.removeItem('storedBlogs')
-		// 		window.localStorage.setItem('storedBlogs', JSON.stringify(userBlogs))
-		// 	})
-
-		setTitle('')
-		setAuthor('')
+		try {
+			const savedBlog = await blogService.create(blog)
+			setUserBlogs([...userBlogs, savedBlog])
+			setActionStatus({ notification: 'blog created successfully' })
+			setTitle('')
+			setAuthor('')
+		} catch (error) {
+			setActionStatus({ error: error.message })
+		}
 	}
 
 	const loginForm = () => (
@@ -167,9 +172,22 @@ const App = () => {
 	)
 
 	return (
-		<div className="flex w-screen flex-col justify-center">
+		<div className="w-scree flex h-screen flex-col justify-center">
+			{actionStatus === null ? null : (
+				<>
+					{actionStatus.error ? (
+						<div className="self-start justify-self-start border-2 border-solid border-red-500 text-center">
+							{actionStatus.error}
+						</div>
+					) : (
+						<div className="self-start justify-self-start border-2 border-solid border-green-500 text-center">
+							{actionStatus.notification}
+						</div>
+					)}
+				</>
+			)}
 			{user === null ? (
-				<div className="grid w-screen grid-cols-3 px-2">
+				<div className="grid w-screen grid-cols-3  px-2">
 					<div></div>
 					<h1>Please login</h1>
 					<div></div>
@@ -188,7 +206,7 @@ const App = () => {
 				</div>
 			)}
 
-			<div className="flex justify-center">
+			<div className="flex justify-center align-middle">
 				{user === null ? (
 					<div>{loginForm()}</div>
 				) : (
