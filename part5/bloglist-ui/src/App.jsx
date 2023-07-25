@@ -46,6 +46,7 @@ const App = () => {
 		window.localStorage.setItem('storedBlogs', JSON.stringify(userBlogs))
 	}, [userBlogs])
 
+	//handles notification popup
 	useEffect(() => {
 		if (actionStatus) {
 			actionStatus.error
@@ -172,7 +173,7 @@ const App = () => {
 	)
 
 	return (
-		<div className="w-scree flex h-screen flex-col justify-center">
+		<>
 			{actionStatus === null ? null : (
 				<>
 					{actionStatus.error ? (
@@ -186,37 +187,32 @@ const App = () => {
 					)}
 				</>
 			)}
-			{user === null ? (
-				<div className="grid w-screen grid-cols-3  px-2">
-					<div></div>
-					<h1>Please login</h1>
-					<div></div>
-				</div>
-			) : (
-				<div className="grid w-screen grid-cols-3 px-2">
-					<h1>Welcome to my Blog</h1>
-					<h2 className="text-center">{user.username}</h2>
-					<button
-						className="justify-self-end"
-						type="submit"
-						onClick={handleLogout}
-					>
-						Logout
-					</button>
-				</div>
-			)}
-
-			<div className="flex justify-center align-middle">
+			<div className="grid h-screen w-screen grid-rows-3 flex-col justify-center">
 				{user === null ? (
-					<div>{loginForm()}</div>
+					<div className="grid w-screen grid-cols-3  px-2">
+						<div></div>
+						<h1 className="text-center text-5xl">Bloglist</h1>
+						<div></div>
+					</div>
 				) : (
-					<div>
-						<p>{user.username}</p>
-						{blogForm()}
+					<div className="grid w-screen grid-cols-3 px-2">
+						<h1>Welcome to my Blog</h1>
+						<h2 className="text-center text-5xl">{user.username}</h2>
+						<button
+							className="h-5 justify-self-end "
+							type="submit"
+							onClick={handleLogout}
+						>
+							Logout
+						</button>
 					</div>
 				)}
+
+				<div className="flex justify-center">
+					{user === null ? <div>{loginForm()}</div> : <div>{blogForm()}</div>}
+				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 
