@@ -7,25 +7,46 @@ import loginService from '../services/login'
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
+	const [userBlogs, setUserBlogs] = useState(
+		JSON.parse(window.localStorage.getItem('storedBlogs')),
+	)
+	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
-	const [user, setUser] = useState(null)
-	// const [errorMessage, setErrorMessage] = useState('')
+
+	const [errorMessage, setErrorMessage] = useState('')
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
+
+	useEffect(() => {
+		if ('loggedUser' in localStorage && !user) {
+			const JSONUser = JSON.parse(window.localStorage.getItem('loggedUser'))
+			const JSONBlogs = JSON.parse(window.localStorage.getItem('storedBlogs'))
+			console.log(user)
+
+			blogService.setToken(JSONUser.token)
+
+			restoreData(JSONUser, JSONBlogs)
+		}
+	}, [user])
 
 	useEffect(() => {
 		blogService.getAll().then((blogs) => {
 			setBlogs(blogs)
 		})
-
-		const loggedUserJSON = window.localStorage.getItem('loggedUser')
-		if (loggedUserJSON) {
-			const JSONUser = JSON.parse(loggedUserJSON)
-			setUser(JSONUser)
-			blogService.setToken(JSONUser.token)
-		}
 	}, [])
+
+	useEffect(() => {
+		//!After adding a blog, The state will be updated on the next render
+		//?We use an effect once to cause a render and gather our new data and store it in localStorage
+		console.log(userBlogs)
+		window.localStorage.setItem('storedBlogs', JSON.stringify(userBlogs))
+	}, [userBlogs])
+
+	const restoreData = (user, blogs) => {
+		setUserBlogs(blogs)
+		setUser(user)
+	}
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
@@ -33,15 +54,21 @@ const App = () => {
 
 		try {
 			const user = await loginService.login({ username, password })
-			window.localStorage.setItem('loggedUser', JSON.stringify(user))
 			setUser(user)
+			window.localStorage.setItem('loggedUser', JSON.stringify(user))
 			blogService.setToken(user.token)
 			setUsername('')
 			setPassword('')
 			console.log(user)
+
+			const uBlogs = blogs.filter((blog) => blog.user.id === user.id)
+			setUserBlogs(uBlogs)
+			window.localStorage.setItem('storedBlogs', JSON.stringify(uBlogs))
+			console.log(userBlogs)
 		} catch (exception) {
 			setErrorMessage('Wrong credentials')
 			setTimeout(() => {
+				console.log(errorMessage)
 				setErrorMessage(null)
 			}, 5000)
 		}
@@ -50,9 +77,10 @@ const App = () => {
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedUser')
 		setUser(null)
+		setUserBlogs([])
 	}
 
-	const addBlog = (e) => {
+	const addBlog = async (e) => {
 		e.preventDefault()
 
 		const blog = {
@@ -62,9 +90,21 @@ const App = () => {
 			likes: 0,
 			user: user.id,
 		}
-		blogService.create(blog).then((blog) => {
-			setBlogs([...blogs, blog])
-		})
+
+		const savedBlog = await blogService.create(blog)
+
+		setUserBlogs([...userBlogs, savedBlog])
+		// blogService
+		// 	.create(blog)
+		// 	.then((blog) => {
+		// 		setUserBlogs([...userBlogs, blog])
+		// 	})
+		// 	.then(() => {
+		// 		console.log('these are the blogs', userBlogs)
+		// 		window.localStorage.removeItem('storedBlogs')
+		// 		window.localStorage.setItem('storedBlogs', JSON.stringify(userBlogs))
+		// 	})
+
 		setTitle('')
 		setAuthor('')
 	}
@@ -92,7 +132,7 @@ const App = () => {
 	const blogForm = () => (
 		<>
 			<ul className="  flex w-[500px] shrink flex-wrap justify-center  text-blue-500">
-				{blogs.map((blog) => (
+				{userBlogs.map((blog) => (
 					<li
 						className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
 						key={blog.blogId}
