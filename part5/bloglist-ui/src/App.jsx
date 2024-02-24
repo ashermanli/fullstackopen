@@ -4,6 +4,8 @@ import Blog from '../components/Blog'
 import BlogEntry from '../components/BlogEntry'
 import blogService from '../services/blogs'
 import loginService from '../services/login'
+import LoginForm from '../components/LoginForm'
+import Togglable from '../components/Togglable'
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
@@ -13,6 +15,7 @@ const App = () => {
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
+	const [loginVisible, setLoginVisible] = useState(false)
 
 	const [actionStatus, setActionStatus] = useState('')
 	const [title, setTitle] = useState('')
@@ -115,25 +118,24 @@ const App = () => {
 		}
 	}
 
-	const loginForm = () => (
-		<form className="flex flex-col" onSubmit={handleLogin}>
-			<label htmlFor="username">Username</label>
-			<input
-				type="text"
-				id="username"
-				value={username}
-				onChange={(event) => setUsername(event.target.value)}
-			/>
-			<label htmlFor="password">Password</label>
-			<input
-				type="password"
-				id="password"
-				value={password}
-				onChange={(event) => setPassword(event.target.value)}
-			/>
-			<button type="submit">Login</button>
-		</form>
-	)
+	const loginForm = () => {
+		return (
+			<div>
+				<div style={hideWhenVisible}>
+					<button onClick={() => setLoginVisible(true)}>log in</button>
+				</div>
+				<div style={showWhenVisible}>
+					<LoginForm
+						username={username}
+						password={password}
+						handleUsernameChange={({ target }) => setUsername(target.value)}
+						handlePasswordChange={({ target }) => setPassword(target.value)}
+					/>
+					<button onClick={() => setLoginVisible(false)}>cancel</button>
+				</div>
+			</div>
+		)
+	}
 
 	const blogForm = () => (
 		<>
@@ -149,27 +151,30 @@ const App = () => {
 					</li>
 				))}
 			</ul>
-			<form onSubmit={addBlog} className="flex flex-col">
-				<label htmlFor="title">Title</label>
-				<input
-					className="border-2 border-solid border-gray-400"
-					type="text"
-					id="title"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-				/>
-				<label htmlFor="author">Author</label>
-				<input
-					className="border-2 border-solid border-gray-400"
-					type="text"
-					id="author"
-					value={author}
-					onChange={(e) => setAuthor(e.target.value)}
-				/>
-
-				<button type="submit">save</button>
-			</form>
 		</>
+	)
+
+	const inputForm = () => (
+		<form onSubmit={addBlog} className="flex flex-col">
+			<label htmlFor="title">Title</label>
+			<input
+				className="border-2 border-solid border-gray-400"
+				type="text"
+				id="title"
+				value={title}
+				onChange={(e) => setTitle(e.target.value)}
+			/>
+			<label htmlFor="author">Author</label>
+			<input
+				className="border-2 border-solid border-gray-400"
+				type="text"
+				id="author"
+				value={author}
+				onChange={(e) => setAuthor(e.target.value)}
+			/>
+
+			<button type="submit">save</button>
+		</form>
 	)
 
 	return (
@@ -209,8 +214,27 @@ const App = () => {
 				)}
 
 				<div className="flex justify-center">
-					{user === null ? <div>{loginForm()}</div> : <div>{blogForm()}</div>}
+					{user === null ? (
+						<Togglable buttonLabel="login">
+							<LoginForm
+								username={username}
+								password={password}
+								handleUsernameChange={({ target }) => setUsername(target.value)}
+								handlePasswordChange={({ target }) => setPassword(target.value)}
+							/>
+						</Togglable>
+					) : (
+						<div>{blogForm()}</div>
+					)}
 				</div>
+
+				{user === null ? null : (
+					<>
+						<div className=" w-[500px] shrink justify-self-center py-5">
+							{inputForm()}
+						</div>
+					</>
+				)}
 			</div>
 		</>
 	)
