@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import Blog from '../components/Blog'
 import BlogEntry from '../components/BlogEntry'
@@ -18,6 +18,8 @@ const App = () => {
 	const [password, setPassword] = useState('')
 
 	const [actionStatus, setActionStatus] = useState('')
+
+	const blogFormRef = useRef()
 
 	//checks local storage if user previously logged in
 	useEffect(() => {
@@ -95,6 +97,7 @@ const App = () => {
 	}
 
 	const addBlog = async (blog) => {
+		blogFormRef.current.toggleVisibility()
 		try {
 			blog = { ...blog, user: user.id }
 
@@ -154,7 +157,7 @@ const App = () => {
 							/>
 						</Togglable>
 					) : (
-						<Togglable buttonLabel="new note">
+						<Togglable buttonLabel="New Blog" ref={blogFormRef}>
 							<BlogForm createBlog={addBlog} user={user} />
 						</Togglable>
 					)}
