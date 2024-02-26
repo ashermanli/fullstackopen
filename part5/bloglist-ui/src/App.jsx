@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 
 import Blog from '../components/Blog'
 import BlogEntry from '../components/BlogEntry'
-import blogService from '../services/blogs'
-import loginService from '../services/login'
+import BlogForm from '../components/BlogForm'
 import LoginForm from '../components/LoginForm'
 import Togglable from '../components/Togglable'
+import blogService from '../services/blogs'
+import loginService from '../services/login'
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
@@ -15,11 +16,8 @@ const App = () => {
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
-	const [loginVisible, setLoginVisible] = useState(false)
 
 	const [actionStatus, setActionStatus] = useState('')
-	const [title, setTitle] = useState('')
-	const [author, setAuthor] = useState('')
 
 	//checks local storage if user previously logged in
 	useEffect(() => {
@@ -37,7 +35,7 @@ const App = () => {
 	//fetches all blogs on initial render
 	useEffect(() => {
 		blogService.getAll().then((blogs) => {
-			setBlogs(blogs)
+			setUserBlogs(blogs)
 		})
 	}, [])
 
@@ -96,86 +94,17 @@ const App = () => {
 		setUserBlogs([])
 	}
 
-	const addBlog = async (e) => {
-		e.preventDefault()
-
-		const blog = {
-			title: title,
-			author: author,
-			url: title,
-			likes: 0,
-			user: user.id,
-		}
-
+	const addBlog = async (blog) => {
 		try {
+			blog = { ...blog, user: user.id }
+
 			const savedBlog = await blogService.create(blog)
 			setUserBlogs([...userBlogs, savedBlog])
 			setActionStatus({ notification: 'blog created successfully' })
-			setTitle('')
-			setAuthor('')
 		} catch (error) {
 			setActionStatus({ error: error.message })
 		}
 	}
-
-	const loginForm = () => {
-		return (
-			<div>
-				<div style={hideWhenVisible}>
-					<button onClick={() => setLoginVisible(true)}>log in</button>
-				</div>
-				<div style={showWhenVisible}>
-					<LoginForm
-						username={username}
-						password={password}
-						handleUsernameChange={({ target }) => setUsername(target.value)}
-						handlePasswordChange={({ target }) => setPassword(target.value)}
-					/>
-					<button onClick={() => setLoginVisible(false)}>cancel</button>
-				</div>
-			</div>
-		)
-	}
-
-	const blogForm = () => (
-		<>
-			<ul className="  flex w-[500px] shrink flex-wrap justify-center  text-blue-500">
-				{userBlogs.map((blog) => (
-					<li
-						className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
-						key={blog.blogId}
-					>
-						<span>Title: {blog.title}</span>
-						<span>Author: {blog.author}</span>
-						<button>Delete</button>
-					</li>
-				))}
-			</ul>
-		</>
-	)
-
-	const inputForm = () => (
-		<form onSubmit={addBlog} className="flex flex-col">
-			<label htmlFor="title">Title</label>
-			<input
-				className="border-2 border-solid border-gray-400"
-				type="text"
-				id="title"
-				value={title}
-				onChange={(e) => setTitle(e.target.value)}
-			/>
-			<label htmlFor="author">Author</label>
-			<input
-				className="border-2 border-solid border-gray-400"
-				type="text"
-				id="author"
-				value={author}
-				onChange={(e) => setAuthor(e.target.value)}
-			/>
-
-			<button type="submit">save</button>
-		</form>
-	)
 
 	return (
 		<>
@@ -221,20 +150,15 @@ const App = () => {
 								password={password}
 								handleUsernameChange={({ target }) => setUsername(target.value)}
 								handlePasswordChange={({ target }) => setPassword(target.value)}
+								handleLogin={handleLogin}
 							/>
 						</Togglable>
 					) : (
-						<div>{blogForm()}</div>
+						<Togglable buttonLabel="new note">
+							<BlogForm createBlog={addBlog} user={user} />
+						</Togglable>
 					)}
 				</div>
-
-				{user === null ? null : (
-					<>
-						<div className=" w-[500px] shrink justify-self-center py-5">
-							{inputForm()}
-						</div>
-					</>
-				)}
 			</div>
 		</>
 	)
