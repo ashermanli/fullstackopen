@@ -13,6 +13,7 @@ const App = () => {
 	const [userBlogs, setUserBlogs] = useState(
 		JSON.parse(window.localStorage.getItem('storedBlogs')),
 	)
+
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
@@ -179,9 +180,7 @@ const App = () => {
 										className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
 										key={blog.blogId}
 									>
-										<span>Title: {blog.title}</span>
-										<span>Author: {blog.author}</span>
-										<button onClick={() => removeBlog(blog)}>Delete</button>
+										<Blog blog={blog} removeBlog={removeBlog} />
 									</li>
 								))}
 							</ul>

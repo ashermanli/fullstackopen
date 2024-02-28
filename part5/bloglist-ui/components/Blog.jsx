@@ -1,8 +1,23 @@
-const Blog = () => {
+import { useState } from 'react'
+
+useState
+const Blog = ({ blog, removeBlog }) => {
+	const [showDetails, setShowDetails] = useState(false)
+
 	return (
-		<div>
-			<h2>Blog Body</h2>
-		</div>
+		<>
+			<span>Title: {blog.title}</span>
+			{showDetails === false ? (
+				''
+			) : (
+				<>
+					<span>Author: {blog.author}</span>
+					<button onClick={() => removeBlog(blog)}>Delete</button>
+				</>
+			)}
+
+			<button onClick={() => setShowDetails(!showDetails)}>Details</button>
+		</>
 	)
 }
 
