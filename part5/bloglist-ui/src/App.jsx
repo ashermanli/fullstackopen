@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Blog from '../components/Blog'
 import BlogEntry from '../components/BlogEntry'
@@ -37,7 +37,7 @@ const App = () => {
 	//fetches all blogs on initial render
 	useEffect(() => {
 		blogService.getAll().then((blogs) => {
-			setUserBlogs(blogs)
+			setBlogs(blogs)
 		})
 	}, [])
 
@@ -109,6 +109,21 @@ const App = () => {
 		}
 	}
 
+	const removeBlog = async (blog) => {
+		try {
+			blog = { ...blog, user: user.id }
+
+			await blogService.remove(blog.blogId, blog)
+			let updatedBlogs = userBlogs.filter(
+				(uBlog) => uBlog.blogId !== blog.blogId,
+			)
+			setUserBlogs(updatedBlogs)
+			setActionStatus({ notification: 'blog deleted successfully' })
+		} catch (error) {
+			setActionStatus({ error: error.message })
+		}
+	}
+
 	return (
 		<>
 			{actionStatus === null ? null : (
@@ -157,9 +172,24 @@ const App = () => {
 							/>
 						</Togglable>
 					) : (
-						<Togglable buttonLabel="New Blog" ref={blogFormRef}>
-							<BlogForm createBlog={addBlog} user={user} />
-						</Togglable>
+						<>
+							<ul className="flex w-[500px] flex-wrap justify-center  text-blue-500">
+								{userBlogs.map((blog) => (
+									<li
+										className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
+										key={blog.blogId}
+									>
+										<span>Title: {blog.title}</span>
+										<span>Author: {blog.author}</span>
+										<button onClick={() => removeBlog(blog)}>Delete</button>
+									</li>
+								))}
+							</ul>
+
+							<Togglable buttonLabel="New Blog" ref={blogFormRef}>
+								<BlogForm createBlog={addBlog} user={user} blogs={userBlogs} />
+							</Togglable>
+						</>
 					)}
 				</div>
 			</div>
