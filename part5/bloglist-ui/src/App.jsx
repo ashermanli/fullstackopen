@@ -5,6 +5,7 @@ import BlogEntry from '../components/BlogEntry'
 import BlogForm from '../components/BlogForm'
 import LoginForm from '../components/LoginForm'
 import Togglable from '../components/Togglable'
+
 import blogService from '../services/blogs'
 import loginService from '../services/login'
 
@@ -116,7 +117,7 @@ const App = () => {
 			blog = { ...blog, user: user.id }
 			blog = { ...blog, likes: currentLikes > 0 ? currentLikes + 1 : 1 }
 
-			let updateBlogs = userBlogs.filter((b) => blog.blogId != b.blogId)
+			let updateBlogs = userBlogs.filter((b) => blog.blogId !== b.blogId)
 
 			updateBlogs = [...updateBlogs, blog]
 
