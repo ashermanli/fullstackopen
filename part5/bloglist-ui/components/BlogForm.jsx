@@ -10,7 +10,7 @@ const BlogForm = ({ createBlog, user }) => {
 		const blog = {
 			title: title,
 			author: author,
-			url: title,
+			url: `${title}.com`,
 			likes: 0,
 		}
 
