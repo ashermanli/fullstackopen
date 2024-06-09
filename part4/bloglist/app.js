@@ -10,11 +10,11 @@ const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
-
 //Connection string and instance
 const mongoURL = config.MONGODB_URI
 // const mongoURL = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoURL)
+mongoose
+	.connect(mongoURL)
 	.then(() => logger.info('connected to mongodb'))
 	.catch((e) => {
 		logger.error('couldnt connect', e)
@@ -29,7 +29,7 @@ app.use(middleware.tokenExtractor)
 //for router to be used, url starts with /api/blogs
 //e.g. localhost:3005/api/blogs
 app.use('/api/blogs', middleware.userExtractor, blogsRouter)
-app.use('/api/users',usersRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
 app.use(middleware.unknownEndpoint)

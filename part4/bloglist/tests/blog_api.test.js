@@ -28,17 +28,20 @@ beforeEach(async () => {
 
 	user = await User.findOne(activeUser)
 
+	//grab the hard coded blogs from the helper file that will be used for testing, and associate them with a user
 	const blogObjects = helper.initialBlogs.map(
 		(blog) => (blog = { ...blog, user: user.id })
 	)
 	await Promise.all(blogObjects)
 
+	//save the blogs to the mongodb database
 	const mongoObjArray = blogObjects.map(async (blog) => {
 		blog = new Blog(blog)
 		await blog.save()
 	})
 	await Promise.all(mongoObjArray)
 
+	//fetch modified blogs from database and associate the blogs to the user
 	const modBlogs = await helper.blogsInDb()
 	modBlogs.forEach((blog) => {
 		user.blogs = modBlogs
@@ -198,7 +201,8 @@ describe('deletion of a blog', () => {
 		const blogsAtStart = await helper.blogsInDb()
 		const blogToDelete = blogsAtStart[0]
 
-		if (!blogsAtStart) expect(blogToDelete.user.toString()).toContain(user.id)
+		if (!blogsAtStart)
+			expect(blogToDelete.user.toString()).toContain(user.id)
 
 		await api
 			.delete(`/api/blogs/${blogToDelete.blogId}`)
