@@ -194,7 +194,7 @@ const App = () => {
 						<>
 							<ul className="flex w-[500px] flex-wrap justify-center  text-blue-500">
 								{userBlogs
-									.sort((a, b) => b.likes - a.likes)
+									.sort((x, y) => x.likes - y.likes)
 									.map((blog) => (
 										<li
 											className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
