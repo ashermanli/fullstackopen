@@ -53,18 +53,38 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
 	const body = request.body
+	const decodedToken = jwt.verify(request.token, process.env.SECRET)
+	let userHeaderID
+
+	if (!decodedToken.id) {
+		return response.status(401).json({ error: 'token invalid' })
+	}
+
+	console.log(decodedToken.id)
+	if (!request.user) {
+		return response.status(401).json({ error: 'missing user header' })
+	} else userHeaderID = request.user
+
+	let user = await User.findById(userHeaderID)
+
 	const blogUpdate = {
-		likes: body.likes,
 		...body,
 	}
 
-	const updateBlog = await Blog.findByIdAndUpdate(
+	//console.log(blogUpdate)
+	const updatedBlog = await Blog.findByIdAndUpdate(
 		request.params.id,
 		blogUpdate,
-		{ new: 'true' }
+		{ new: true }
 	)
+	console.log('blog has been updated')
 
-	response.status(200).json(updateBlog).end()
+	if (!updatedBlog) {
+		return response.status(404).json({ error: 'Blog not found' })
+	}
+
+	//console.log(updatedBlog)
+	response.status(200).json(updatedBlog).end()
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
