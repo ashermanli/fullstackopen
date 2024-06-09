@@ -110,6 +110,24 @@ const App = () => {
 		}
 	}
 
+	const addLike = async (blog) => {
+		try {
+			let currentLikes = blog.likes
+			blog = { ...blog, user: user.id }
+			blog = { ...blog, likes: currentLikes > 0 ? currentLikes + 1 : 1 }
+
+			let updateBlogs = userBlogs.filter((b) => blog.blogId != b.blogId)
+
+			updateBlogs = [...updateBlogs, blog]
+
+			await blogService.update(blog.blogId, blog)
+
+			setUserBlogs(updateBlogs)
+		} catch (error) {
+			console.log('here')
+		}
+	}
+
 	const removeBlog = async (blog) => {
 		try {
 			blog = { ...blog, user: user.id }
@@ -175,14 +193,21 @@ const App = () => {
 					) : (
 						<>
 							<ul className="flex w-[500px] flex-wrap justify-center  text-blue-500">
-								{userBlogs.map((blog) => (
-									<li
-										className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
-										key={blog.blogId}
-									>
-										<Blog blog={blog} removeBlog={removeBlog} />
-									</li>
-								))}
+								{userBlogs
+									.sort((a, b) => b.likes - a.likes)
+									.map((blog) => (
+										<li
+											className="m-2 flex basis-1/3  flex-col border-2 border-solid border-red-700 bg-slate-800"
+											key={blog.blogId}
+										>
+											<Blog
+												blog={blog}
+												removeBlog={removeBlog}
+												addLike={addLike}
+												user={user}
+											/>
+										</li>
+									))}
 							</ul>
 
 							<Togglable buttonLabel="New Blog" ref={blogFormRef}>
